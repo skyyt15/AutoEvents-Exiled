@@ -36,6 +36,6 @@ namespace AutoEvent.Events.Infection
                 ev.Player.Position = Plugin.GameMap.transform.position + new Vector3(-18.75f, 2.5f, 0f);
             });
         }
-        public void OnTeamRespawn(RespawningTeamEventArgs ev) { ev.IsAllowed = false; }
+        public void OnTeamRespawn(RespawningTeamEventArgs ev) => ev.IsAllowed = false;
     }
 }

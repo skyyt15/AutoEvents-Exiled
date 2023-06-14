@@ -38,7 +38,12 @@ namespace AutoEvent.Events.GunGame
             // Attacker shit
             if (ev.Attacker != null)
             {
-                _playerStats.TryGetValue(ev.Attacker, out Stats statsAttacker);
+                if (!_playerStats.TryGetValue(ev.Attacker, out Stats statsAttacker))
+                {
+                    Stats _stat = new Stats() { kill = 0, level = 1 };
+                    _playerStats.Add(ev.Attacker, _stat);
+                    statsAttacker = _stat;
+                }
                 statsAttacker.kill++;
                 if (statsAttacker.kill >= 2)
                 {
@@ -52,15 +57,21 @@ namespace AutoEvent.Events.GunGame
             // Target shit
             if (ev.Player != null)
             {
+                if (!_playerStats.TryGetValue(ev.Attacker, out Stats statsPlayer))
+                {
+                    Stats _stat = new Stats() { kill = 0, level = 1 };
+                    _playerStats.Add(ev.Attacker, _stat);
+                    statsPlayer = _stat;
+                }
                 ev.Player.ClearInventory();
-                ev.Player.CurrentItem = Item.Create(GunGameGuns.GunForLevel[_playerStats[ev.Player].level], ev.Player);
+                ev.Player.CurrentItem = Item.Create(GunGameGuns.GunForLevel[statsPlayer.level], ev.Player);
                 ev.Player.EnableEffect<CustomPlayerEffects.SpawnProtected>(1);
                 ev.Player.Position = _gameMap.Position + GunGameRandom.GetRandomPosition();
             }
         }
         public void OnShooting(ShootingEventArgs ev)
         {
-            switch (ev.Player.Inventory.CurItem.TypeId)
+            switch (ev.Player.CurrentItem.Type)
             {
                 case (ItemType.GunCOM15):
                 case (ItemType.GunCOM18):

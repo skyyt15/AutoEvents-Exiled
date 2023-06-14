@@ -6,20 +6,21 @@ using PlayerRoles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace AutoEvent.Events.Escape
 {
-    public class Plugin : IEvent
+    public class Plugin : Event
     {
-        public string Name => AutoEvent.Singleton.Translation.EscapeName;
-        public string Description => AutoEvent.Singleton.Translation.EscapeDescription;
-        public string Color => "FFFF00";
-        public string CommandName => "escape";
+        public override string Name { get; set; } = AutoEvent.Singleton.Translation.EscapeName;
+        public override string Description { get; set; } = AutoEvent.Singleton.Translation.EscapeDescription;
+        public override string Color { get; set; } = "FFFF00";
+        public override string CommandName { get; set; } = "escape";
         public TimeSpan EventTime { get; set; }
 
         EventHandler _eventHandler;
 
-        public void OnStart()
+        public override void OnStart()
         {
             _eventHandler = new EventHandler();
 
@@ -29,7 +30,7 @@ namespace AutoEvent.Events.Escape
             Exiled.Events.Handlers.Scp173.PlacingTantrum += _eventHandler.OnPlaceTantrum;
             OnEventStarted();
         }
-        public void OnStop()
+        public override void OnStop()
         {
             Exiled.Events.Handlers.Player.Verified -= _eventHandler.OnJoin;
             Exiled.Events.Handlers.Cassie.SendingCassieMessage -= _eventHandler.OnSendCassie;
@@ -52,10 +53,10 @@ namespace AutoEvent.Events.Escape
             // we need Running in the 90's and Vicky Vale - Dancing lmao :D
             Extensions.PlayAudio("Escape.ogg", 25, true, Name);
             // Warhead started
-            Warhead.DetonationTimer = 120f;
-            Warhead.Start();
-            Warhead.IsLocked = true;
-
+            //Warhead.DetonationTimer = 120f;
+            //Warhead.Start();
+            //Warhead.IsLocked = true;
+            Room.List.ToList().ForEach(room => room.Color = FlickerableLightController.DefaultWarheadColor);
             Timing.RunCoroutine(OnEventRunning(), "escape_run");
         }
         public IEnumerator<float> OnEventRunning()
@@ -77,8 +78,9 @@ namespace AutoEvent.Events.Escape
                 EventTime += TimeSpan.FromSeconds(1f);
             }
             // Disable Warhead
-            Warhead.IsLocked = false;
-            Warhead.Stop();
+            Room.List.ToList().ForEach(room => room.ResetColor());
+            //Warhead.IsLocked = false;
+            //Warhead.Stop();
             // We pretend that the warhead exploded so that we can conduct this mini-game many times.
             foreach (Player player in Player.List)
             {
@@ -88,7 +90,7 @@ namespace AutoEvent.Events.Escape
                     player.Kill(DamageType.Warhead);
                 }
             }
-            Extensions.Broadcast(trans.EscapeEnd.Replace("{name}", Name), 10);
+            Extensions.Broadcast(trans.EscapeEnd.Replace("{name}", Name).Replace("{winners}", Player.List.Count(x => x.Role.Type == RoleTypeId.Scp173).ToString()).Replace("{total}", Player.List.Count().ToString()), 10);
             OnStop();
             yield break;
         }

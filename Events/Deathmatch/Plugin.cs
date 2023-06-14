@@ -11,12 +11,12 @@ using UnityEngine;
 
 namespace AutoEvent.Events.Deathmatch
 {
-    public class Plugin// : IEvent
+    public class Plugin : Event
     {
-        public string Name => AutoEvent.Singleton.Translation.DeathmatchName;
-        public string Description => AutoEvent.Singleton.Translation.DeathmatchDescription;
-        public string Color => "FFFF00";
-        public string CommandName => "deathmatch";
+        public override string Name { get; set; } = AutoEvent.Singleton.Translation.DeathmatchName;
+        public override string Description { get; set; } = AutoEvent.Singleton.Translation.DeathmatchDescription;
+        public override string Color { get; set; } = "FFFF00";
+        public override string CommandName { get; set; } = "deathmatch";
         public TimeSpan EventTime { get; set; }
         public SchematicObject GameMap { get; set; }
         public List<Vector3> Spawners { get; set; } = new List<Vector3>();
@@ -26,7 +26,7 @@ namespace AutoEvent.Events.Deathmatch
         public int NeedKills;
         EventHandler _eventHandler;
 
-        public void OnStart()
+        public override void OnStart()
         {
             _eventHandler = new EventHandler(this);
 
@@ -42,7 +42,7 @@ namespace AutoEvent.Events.Deathmatch
             Exiled.Events.Handlers.Player.DroppingAmmo += _eventHandler.OnDropAmmo;
             OnEventStarted();
         }
-        public void OnStop()
+        public override void OnStop()
         {
             Exiled.Events.Handlers.Player.Verified -= _eventHandler.OnJoin;
             Exiled.Events.Handlers.Server.RespawningTeam -= _eventHandler.OnTeamRespawn;

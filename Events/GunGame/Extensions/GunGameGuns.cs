@@ -21,7 +21,6 @@ namespace AutoEvent.Events.GunGame
             [13] = ItemType.GunE11SR,
             [14] = ItemType.GunLogicer,
             [15] = ItemType.Jailbird,
-            [16] = ItemType.None
         };
     }
 }

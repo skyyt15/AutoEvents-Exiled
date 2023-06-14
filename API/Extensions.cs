@@ -46,7 +46,7 @@ namespace AutoEvent
                 {
                     hubPlayer.nicknameSync.SetNick(eventName);
                 }
-                catch (Exception) { }
+                catch{}
 
                 var audioPlayer = AudioPlayerBase.Get(hubPlayer);
 
@@ -54,7 +54,7 @@ namespace AutoEvent
 
                 audioPlayer.Enqueue(path, -1);
                 audioPlayer.LogDebug = false;
-                audioPlayer.BroadcastChannel = VoiceChatChannel.Intercom;
+                audioPlayer.BroadcastChannel = VoiceChatChannel.RoundSummary;
                 audioPlayer.Volume = volume;
                 audioPlayer.Loop = loop;
                 audioPlayer.Play(0);
